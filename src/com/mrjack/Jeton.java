@@ -25,30 +25,8 @@ public enum Jeton {
         isHoldByHolmes = holdByHolmes;
     }
 
-    public String getAction() {
-        if (isHead) {
-            switch (this.ordinal()) {
-                case 0:
-                    return "holmes";
-                case 1:
-                    return "watson";
-                case 2:
-                    return "exchange";
-                default:
-                    return "all";
-            }
-
-        } else {
-            switch (this.ordinal()) {
-                case 0:
-                    return "draw";
-                case 1:
-                    return "toby";
-                default:
-                    return "rotate";
-            }
-        }
-
+    @Override
+    public String toString() {
+        return this.name()+"("+isHead+")";
     }
-
 }

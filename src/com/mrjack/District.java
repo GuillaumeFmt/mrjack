@@ -9,14 +9,14 @@ public class District {
 
     private final Card card;
     private boolean isSuspect;
-    private Integer orientation;
+    private Direction orientation;
 
     public District(Card card) {
         this.card = card;
-        this.orientation = 0;
+        this.orientation = Direction.NORTH;
     }
 
-    public District(Card card, Integer orientation) {
+    public District(Card card, Direction orientation) {
         this.card = card;
         this.orientation = orientation;
     }
@@ -27,10 +27,10 @@ public class District {
     }
 
     public void rotate(int times) {
-        this.orientation = (this.orientation + times) % 4;
+        this.orientation = Direction.values()[(this.orientation.ordinal() + times) % 4];
     }
 
-    public void setOrientation(Integer orientation) {
+    public void setOrientation(Direction orientation) {
         this.orientation = orientation;
     }
 
@@ -43,11 +43,26 @@ public class District {
         return isSuspect;
     }
 
-    public Integer getOrientation() {
+    public Direction getOrientation() {
         return orientation;
     }
 
     private void setInnocent(){
         this.isSuspect = false;
+    }
+
+    @Override
+    public String toString() {
+        switch (this.orientation.ordinal()){
+            case 0:
+                return "╦";
+            case 1:
+                return "╣";
+            case 2:
+                return "╩";
+            default:
+                return "╠";
+
+        }
     }
 }

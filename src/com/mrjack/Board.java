@@ -15,7 +15,7 @@ public class Board {
     private ArrayList<ArrayList<District>> board = new ArrayList<>(3);
     private Card mrjackId;
     private ArrayList<Card> deck;
-    private ArrayList<Integer> detectivesPositions = new ArrayList<>(3);
+    private ArrayList<Detective> detectives = new ArrayList<>(3);
     private int lapNumber;
     private ArrayList<Jeton> jetons;
 
@@ -33,44 +33,44 @@ public class Board {
         Collections.shuffle(deck);
 
         //board
-        for(int i=0; i<3;i++) {
+        for (int i = 0; i < 3; i++) {
             ArrayList<District> row = new ArrayList<>();
             for (int j = 0; j < 3; j++) {
-                int random = (int) (Math.random() * 3);
-                row.add(new District(deck.get(3*i+j),random));
+                Direction random = Direction.values()[(int) (Math.random() * 3)];
+                row.add(new District(deck.get(3 * i + j), random));
             }
             board.add(row);
         }
-        board.get(0).get(0).setOrientation(4);
-        board.get(0).get(2).setOrientation(1);
-        board.get(2).get(1).setOrientation(3);
+        board.get(0).get(0).setOrientation(Direction.WEST);
+        board.get(0).get(2).setOrientation(Direction.EAST);
+        board.get(2).get(1).setOrientation(Direction.SOUTH);
 
         //mrJackId
         Collections.shuffle(deck);
         mrjackId = draw();
 
         //detective pos
-        detectivesPositions.add(11);
-        detectivesPositions.add(3);
-        detectivesPositions.add(7);
+        detectives.add(Detective.HOLMES);
+        detectives.add(Detective.WATSON);
+        detectives.add(Detective.TOBY);
 
-        lapNumber=1;
+        lapNumber = 1;
     }
 
-    public Board(ArrayList<ArrayList<District>> board, Card mrjackId, ArrayList<Card> deck, ArrayList<Integer> detectivesPositions, int lapNumber) {
+    public Board(ArrayList<ArrayList<District>> board, Card mrjackId, ArrayList<Card> deck, ArrayList<Detective> detectives, int lapNumber) {
         this.board = board;
         this.mrjackId = mrjackId;
         this.deck = deck;
-        this.detectivesPositions = detectivesPositions;
+        this.detectives = detectives;
         this.lapNumber = lapNumber;
     }
 
     public Card draw() {
-        return deck.remove(deck.size()-1);
+        return deck.remove(deck.size() - 1);
     }
 
     public boolean isHolmesStarting() {
-        return lapNumber%2 == 1;
+        return lapNumber % 2 == 1;
     }
 
     public void endTurn() {
@@ -84,8 +84,8 @@ public class Board {
     @Override
     public String toString() {
         StringBuilder boardStr = new StringBuilder("\n");
-        for(ArrayList<District> row : board) {
-            for (District district: row) {
+        for (ArrayList<District> row : board) {
+            for (District district : row) {
                 boardStr.append(" | ").append(district.getCard()).append(district.getOrientation());
             }
             boardStr.append("|\n");
@@ -94,7 +94,7 @@ public class Board {
                 "\nboard=" + boardStr +
                 ", mrjackId=" + mrjackId +
                 ", \ndeck=" + deck +
-                ", \ndetectivesPositions=" + detectivesPositions +
+                ", \ndetectivesPositions=" + detectives +
                 ", \nlapNumber=" + lapNumber +
                 ", \njetons=" + jetons +
                 '}';
@@ -102,16 +102,58 @@ public class Board {
 
     public String show() {
         StringBuilder boardStr = new StringBuilder("\n");
-        for(ArrayList<District> row : board) {
-            for (District district: row) {
-                boardStr.append(" | ").append(district.getCard()).append(district.getOrientation());
+        for (ArrayList<District> row : board) {
+            for (int i=0; i<5; i++) {
+                if(i>0 && i<4) {
+                    boardStr.append(" ").append(row.get(i - 1));
+                } else {
+
+                }
             }
-            boardStr.append("|\n");
+            boardStr.append("\n");
         }
         return "Le plateau ressemble a " +
-                "board=" + boardStr +
-                ", detectivesPositions=" + detectivesPositions + "\n" +
+                "board=\n" + boardStr +
+                ", detectivesPositions=" + detectives + "\n" +
                 ", lapNumber=" + lapNumber + "\n" +
                 ", jetons=" + jetons;
+    }
+
+    public void moveDetective(Detective detective) {
+        System.out.println("De quelle distance le faire avancer");
+        int distance = Game.scan.nextInt();
+        detective.movePosition(distance);
+    }
+
+    public void executeAction(Jeton jeton) {
+        if (jeton.isHead()) {
+            switch (jeton.ordinal()) {
+                case 0:
+                    moveDetective(detectives.get(0));
+                    break;
+                case 1:
+                    moveDetective(detectives.get(1));
+                    break;
+                case 2:
+//                    return "exchange";
+                    break;
+                default:
+                    System.out.println("0:Holmes, 1:Watson, 2:Toby");
+                    Detective detective = detectives.get(Game.scan.nextInt());
+                    moveDetective(detective);
+            }
+
+        } else {
+            switch (jeton.ordinal()) {
+                case 0:
+//                    return "draw";
+                    break;
+                case 1:
+                    moveDetective(detectives.get(2));
+                    break;
+                default:
+//                    return "rotate";
+            }
+        }
     }
 }
